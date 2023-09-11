@@ -26,6 +26,10 @@ func main() {
 	}
 
 	slices.Sort(results)
+	slices.Reverse(results)
 
-	fmt.Println(results[len(results)-1])
+	fmt.Println("top elf has", results[0], "calories")
+
+	top3 := results[0] + results[1] + results[2]
+	fmt.Println("top 3 are carring", top3, "calories")
 }
