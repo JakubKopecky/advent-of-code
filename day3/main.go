@@ -43,8 +43,58 @@ func getPoints(x rune) int {
 	return 0
 }
 
+// PART 2
+
+type elfGroup struct {
+	items      [3]string
+	uniqueRune rune
+}
+
+func newElfGroup(newItems [3]string) *elfGroup {
+	return &elfGroup{
+		items: newItems,
+	}
+}
+
+func (e *elfGroup) removeDuplicates() *elfGroup {
+	for index := range e.items {
+		e.items[index] = removeDuplicateFromString(e.items[index])
+	}
+	return e
+}
+
+func removeDuplicateFromString(line string) string {
+	chars := make(map[rune]bool)
+	toReturn := []rune{}
+	for _, char := range line {
+		if _, value := chars[char]; !value {
+			chars[char] = true
+			toReturn = append(toReturn, char)
+		}
+	}
+	return string(toReturn)
+}
+
+func (e *elfGroup) findUniqueRune() rune {
+	table := make(map[rune]int)
+
+	for _, line := range e.items {
+		for _, char := range line {
+			table[char] += 1
+		}
+	}
+
+	for key, value := range table {
+		if value == 3 {
+			return key
+		}
+	}
+	return 0
+}
+
 func main() {
 	file, _ := os.Open("adventofcode.com_2022_day_3_input.txt")
+	defer file.Close()
 	score := 0
 
 	scanner := bufio.NewScanner(file)
@@ -53,4 +103,22 @@ func main() {
 		score += getPoints(x.uniqueRune)
 	}
 	fmt.Println("score is", score)
+
+	file2, _ := os.Open("adventofcode.com_2022_day_3_input.txt")
+	defer file2.Close()
+	score2 := 0
+
+	scanner = bufio.NewScanner(file2)
+	for scanner.Scan() {
+		var lines [3]string
+		lines[0] = scanner.Text()
+		scanner.Scan()
+		lines[1] = scanner.Text()
+		scanner.Scan()
+		lines[2] = scanner.Text()
+
+		unique := newElfGroup(lines).removeDuplicates().findUniqueRune()
+		score2 += getPoints(unique)
+	}
+	fmt.Println("score for part2 is", score2)
 }
