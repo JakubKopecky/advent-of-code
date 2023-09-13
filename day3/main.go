@@ -75,7 +75,7 @@ func removeDuplicateFromString(line string) string {
 	return string(toReturn)
 }
 
-func (e *elfGroup) findUniqueRune() rune {
+func (e *elfGroup) findUniqueRune() *elfGroup {
 	table := make(map[rune]int)
 
 	for _, line := range e.items {
@@ -86,10 +86,11 @@ func (e *elfGroup) findUniqueRune() rune {
 
 	for key, value := range table {
 		if value == 3 {
-			return key
+			e.uniqueRune = key
+			return e
 		}
 	}
-	return 0
+	return e
 }
 
 func main() {
@@ -117,8 +118,8 @@ func main() {
 		scanner.Scan()
 		lines[2] = scanner.Text()
 
-		unique := newElfGroup(lines).removeDuplicates().findUniqueRune()
-		score2 += getPoints(unique)
+		group := newElfGroup(lines).removeDuplicates().findUniqueRune()
+		score2 += getPoints(group.uniqueRune)
 	}
 	fmt.Println("score for part2 is", score2)
 }
