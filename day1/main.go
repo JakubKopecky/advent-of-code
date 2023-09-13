@@ -22,7 +22,6 @@ func main() {
 		}
 		add, _ := strconv.Atoi(scanner.Text())
 		x += add
-
 	}
 
 	slices.Sort(results)

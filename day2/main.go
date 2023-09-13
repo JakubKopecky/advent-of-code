@@ -59,6 +59,26 @@ func doOutcome(game game) int {
 		return selectionPointsPlayerA(game) + 3
 	}
 	if game.playerB == 'Z' {
+		if game.playerA == 'A' {
+			return 2 + 6
+		}
+		if game.playerA == 'B' {
+			return 3 + 6
+		}
+		if game.playerA == 'C' {
+			return 1 + 6
+		}
+	}
+	if game.playerB == 'X' {
+		if game.playerA == 'A' {
+			return 3
+		}
+		if game.playerA == 'B' {
+			return 1
+		}
+		if game.playerA == 'C' {
+			return 2
+		}
 	}
 	return 0
 }
