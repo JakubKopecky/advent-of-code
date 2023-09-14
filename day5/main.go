@@ -76,19 +76,16 @@ func readFile(file *os.File) []string {
 	return toReturn
 }
 
-func showStacks(stacks []*stack.Stack) {
-	for _, stack := range stacks {
-		for x := stack.Pop(); x != nil; x = stack.Pop() {
-			fmt.Printf("%c", x)
-		}
-		fmt.Println()
-	}
+func splitInstruction(line string) (int, int, int) {
+	split := strings.Split(line, " ")
+	amount, _ := strconv.Atoi(split[1])
+	from, _ := strconv.Atoi(split[3])
+	to, _ := strconv.Atoi(split[5])
+	return amount, from, to
 }
 
 func doInstruction(line string, stacks []*stack.Stack) {
-	split := strings.Split(line, " ")
-	from, _ := strconv.Atoi(split[3])
-	to, _ := strconv.Atoi(split[5])
+	_, from, to := splitInstruction(line)
 
 	x := stacks[from-1].Pop()
 	stacks[to-1].Push(x)
@@ -97,13 +94,31 @@ func doInstruction(line string, stacks []*stack.Stack) {
 func loopInstructions(lines []string, stacks []*stack.Stack) {
 	for _, line := range lines {
 		if isInstructionRow(line) {
-			numberStr := strings.Split(line, " ")[1]
-			number, _ := strconv.Atoi(numberStr)
+			number, _, _ := splitInstruction(line)
 			for number > 0 {
 				doInstruction(line, stacks)
 				number--
 			}
 		}
+	}
+}
+
+func loopInstructionsPart2(lines []string, stacks []*stack.Stack) {
+	for _, line := range lines {
+		if isInstructionRow(line) {
+			doInstructionPart2(line, stacks)
+		}
+	}
+}
+
+func doInstructionPart2(line string, stacks []*stack.Stack) {
+	amount, from, to := splitInstruction(line)
+	moved := []interface{}{}
+	for i := 0; i < amount; i++ {
+		moved = append(moved, stacks[from-1].Pop())
+	}
+	for i := amount - 1; i >= 0; i-- {
+		stacks[to-1].Push(moved[i])
 	}
 }
 
@@ -116,11 +131,15 @@ func peekAllStacks(stacks []*stack.Stack) {
 
 func main() {
 	file, _ := os.Open("adventofcode.com_2022_day_5_input.txt")
-	// file, _ := os.Open("example.txt")
 	defer file.Close()
 
 	lines := readFile(file)
+
 	stacks := createStacks(lines)
 	loopInstructions(lines, stacks)
 	peekAllStacks(stacks)
+
+	stacks2 := createStacks(lines)
+	loopInstructionsPart2(lines, stacks2)
+	peekAllStacks(stacks2)
 }
