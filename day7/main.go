@@ -63,17 +63,15 @@ func getLsLineInfo(line string) (int, string) {
 	return size, sub[1]
 }
 
-var sizes []int
-
-func getDirSize(dir *item) int {
+func getDirSize(dir *item, sizes *[]int) int {
 	total := 0
 	for _, i := range dir.content {
 		total += i.size
 		if i.size == 0 {
-			total += getDirSize(i)
+			total += getDirSize(i, sizes)
 		}
 	}
-	sizes = append(sizes, total)
+	*sizes = append(*sizes, total)
 	return total
 }
 
@@ -113,7 +111,8 @@ func main() {
 		}
 	}
 
-	getDirSize(root)
+	sizes := []int{}
+	getDirSize(root, &sizes)
 
 	sum := 0
 	for _, size := range sizes {
